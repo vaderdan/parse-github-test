@@ -6,6 +6,7 @@ methods:
 Parseservice
 
 getUser
+
 getUserRepos
 
 
