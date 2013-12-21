@@ -1,4 +1,2 @@
-parse-github-test
-=================
-
-parse github test
+# parseapi
+### a Sails application
