@@ -10,8 +10,15 @@ var request = require('request')
 
 
 $.index = function(req, res) {
-	PygmentsService.go();
 	
+	
+	PygmentsService.go('app.js', function(err, data){
 
-	res.send('here');
+		console.log(data);
+	});
+
+	res.send('bla');
 }
+
+// console.log('here')
+// PygmentsService.go();

@@ -7,44 +7,57 @@ var request = require('request')
   , _ = require('underscore')
   , highlight = require('pygments').colorize
   , sh = require('shelljs')
+  , when = require('when')
   , $ = module.exports = Pygments = {};
 
 
 
 
-$.go = function() {
+$.go = function(file, call) {
 	if (!sh.which('pygmentize')) {
-		console.log('here')
+		call('python binary is missing')
 	  return;
 	}
 
-	// console.log('here2')
 
-	var file = 'app.js';
-	var lexer;
 
-	sh.exec('pygmentize -N ' + file, function(code, lexer) {
-		lexer.replace(/\n/, '', lexer);
-		// lexer = output;
+	var getLexer = function(err, lexer){
+		var deferred = when.defer();
 
-		highlight(file, lexer, 'console', function(data) {
-		  console.log(data);
-		}, { 'O': 'style=monokai,linenos=1'});
+		sh.exec('pygmentize -N ' + file, {'silent': true}, function(code, lexer) {
+			
+
+			if(code != 0){
+				deferred.reject(new Error('Lexer not found'));
+			}
+			else{
+				lexer = lexer.replace(/\n/, '', lexer);
+				deferred.resolve(lexer); 
+			}
+		});
+
+
+
+		return deferred.promise;
+	}
+
+	var executeHighlight = function(target, lexer, format, options){
+		var deferred = when.defer();
+
+		highlight(target, lexer, format, function(data) {
+			deferred.resolve(data); 		 	
+		}, options);
+
+		return deferred.promise;
+	}
+
+
+	getLexer().
+	then(function(lexer){
+		return executeHighlight(file, lexer, 'console', { 'O': 'style=monokai,linenos=1'});
+	}).
+	then(function(data){
+		call(null, data);
 	});
 
-	
-
-	// if (exec('git commit -am "Auto-commit"').code !== 0) {
-	//   echo('Error: Git commit failed');
-	//   exit(1);
-	// }
-
-	// var lexer = 
-
-
-	// // target, lexer, format, callback, options
-	// // console.log(highlight.toString());
-	
-
-	
 }
