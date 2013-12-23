@@ -8,19 +8,33 @@ var request = require('request')
   , highlight = require('pygments').colorize
   , sh = require('shelljs')
   , when = require('when')
+  , fs = require('fs')
   , $ = module.exports = Pygments = {};
 
 
 
 
-$.go = function(file, call) {
+$.pygmentize = function(target, call, call2) {
 	if (!sh.which('pygmentize')) {
 		call('python binary is missing')
 	  return;
 	}
 
-	
+	fs.exists(target, function(exists){
+		if(exists){
+			$.pygmentizeFile(target, call);
+		}
+		else{
+			$.pygmentizeString(target, call, call2);	
+		}
+	});
+}
 
+$.pygmentizeFile = function(file, call) {
+	if (!sh.which('pygmentize')) {
+		call('python binary is missing')
+	  return;
+	}
 
 	getLexer(file).
 	then(function(lexer){
@@ -30,6 +44,19 @@ $.go = function(file, call) {
 		call(null, data);
 	});
 }
+
+$.pygmentizeString = function(string, lexer, call) {
+	if (!sh.which('pygmentize')) {
+		call('python binary is missing')
+	  return;
+	}
+	
+	executeHighlight(string, lexer, 'console', { 'O': 'style=monokai,linenos=1'}).	
+	then(function(data){
+		call(null, data);
+	});
+}
+
 
 
 var getLexer = function(target){
@@ -60,3 +87,5 @@ var executeHighlight = function(target, lexer, format, options){
 
 	return deferred.promise;
 }
+
+

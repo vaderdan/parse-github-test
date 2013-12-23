@@ -74,3 +74,15 @@ Config service
     removeHistory(history, callback) //history can be title by you search, index or history object
     listHistorys(callback)
 ```
+
+
+
+Pygmentize service
+
+
+```javascript
+  pygmentize('file or string', ['lexer'], callback)
+  pygmentizeFile('file', callback)
+  pygmentizeString('string', 'lexer', callback)
+```
+
