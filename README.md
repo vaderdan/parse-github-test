@@ -46,7 +46,7 @@ http://localhost:1337/parse/repostree?user=vaderdan&repo=dominspector
 
 
 Config service
-
+```javascript
   save(callback)
   load(callback)
   reload(callback)
@@ -73,5 +73,4 @@ Config service
     addHistory(history, callback)
     removeHistory(history, callback) //history can be title by you search, index or history object
     listHistorys(callback)
-
-
+```
