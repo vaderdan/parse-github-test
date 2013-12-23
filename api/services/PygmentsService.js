@@ -19,45 +19,44 @@ $.go = function(file, call) {
 	  return;
 	}
 
+	
 
 
-	var getLexer = function(err, lexer){
-		var deferred = when.defer();
-
-		sh.exec('pygmentize -N ' + file, {'silent': true}, function(code, lexer) {
-			
-
-			if(code != 0){
-				deferred.reject(new Error('Lexer not found'));
-			}
-			else{
-				lexer = lexer.replace(/\n/, '', lexer);
-				deferred.resolve(lexer); 
-			}
-		});
-
-
-
-		return deferred.promise;
-	}
-
-	var executeHighlight = function(target, lexer, format, options){
-		var deferred = when.defer();
-
-		highlight(target, lexer, format, function(data) {
-			deferred.resolve(data); 		 	
-		}, options);
-
-		return deferred.promise;
-	}
-
-
-	getLexer().
+	getLexer(file).
 	then(function(lexer){
 		return executeHighlight(file, lexer, 'console', { 'O': 'style=monokai,linenos=1'});
 	}).
 	then(function(data){
 		call(null, data);
 	});
+}
 
+
+var getLexer = function(target){
+	var deferred = when.defer();
+
+	sh.exec('pygmentize -N ' + target, {'silent': true}, function(code, lexer) {
+		
+
+		if(code != 0){
+			deferred.reject(new Error('Lexer not found'));
+		}
+		else{
+			lexer = lexer.replace(/\n/, '', lexer);
+			deferred.resolve(lexer); 
+		}
+	});
+
+
+	return deferred.promise;
+}
+
+var executeHighlight = function(target, lexer, format, options){
+	var deferred = when.defer();
+
+	highlight(target, lexer, format, function(data) {
+		deferred.resolve(data); 		 	
+	}, options);
+
+	return deferred.promise;
 }

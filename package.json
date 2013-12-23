@@ -19,7 +19,9 @@
         "xmldom": ">=0.1",
         "async": ">=0.2",
         "pygments": ">=0.2",
-        "shelljs": ">=0.2"
+        "shelljs": ">=0.2",
+        "ini": ">=1.1",
+        "lockfile": ">=0.4"
     },
     "scripts": {
         "start": "node app.js",
